@@ -1,0 +1,23 @@
+#grid {
+    margin:0 auto;
+    width: 780px;
+    height: 780px;
+    overflow: scroll;
+}
+canvas {
+    width: 250px;
+    height: 250px;
+    background: black;
+}
+.child {
+    border: 4px solid grey;
+}
+.child.selected {
+    border: 4px solid green;
+}
+.parent {
+    border: 4px solid blue;
+}
+.parent.selected {
+    border: 4px solid green;
+}
