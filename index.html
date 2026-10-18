@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>defy.org: Biomorphs</title>
+    <link rel="shortcut icon" href="https://www.defy.org/favicon.ico" type="image/x-icon" />
+
+    <!-- start header includes -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <!-- end header includes -->
+</head>
+
+<body>
+<div class="container pt-3">
+    <div class="row">
+        <div class="col-md-12">
+            <blockquote>
+                <p>Once a Darwinian process gets going in a world, it has an open-ended power to generate surprising consequences: us, for example.</p>
+                <footer>Richard Dawkins <cite title="The Blind Watchmaker">The Blind Watchmaker</cite></footer>
+            </blockquote>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <!-- the canvases in a row are written without space between them, so they sit edge to edge -->
+            <div id="grid">
+                <div>
+                    <canvas class="child">No canvas support</canvas><canvas class="child">No canvas support</canvas><canvas class="child">No canvas support</canvas>
+                </div>
+                <div>
+                    <canvas class="child">No canvas support</canvas><canvas class="parent">No canvas support</canvas><canvas class="child">No canvas support</canvas>
+                </div>
+                <div>
+                    <canvas class="child">No canvas support</canvas><canvas class="child">No canvas support</canvas><canvas class="child">No canvas support</canvas>
+                </div>
+            </div>
+            <button id="randomBtn">Random Monster</button>
+        </div>
+    </div>
+</div>
+<script type="module" src="/src/biomorphs.js"></script>
+</body>
+
+</html>
