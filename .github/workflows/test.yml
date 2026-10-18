@@ -65,8 +65,12 @@ jobs:
       # build are removed. bundle.js is the script of the build before the move to Vite (October
       # 2026). Its index.html was served without a cache header, so browsers may keep using it
       # for weeks, and it is kept for them. The exclude can go after the end of 2026.
+      # Browsers check for a new version of these on every load (max-age=0), and CloudFront keeps
+      # them for a day (s-maxage), until the invalidation below clears them.
       - name: Upload pages and other files
-        run: aws s3 sync dist/ "$TARGET/" --delete --exclude "assets/*" --exclude "bundle.js"
+        run: >-
+          aws s3 sync dist/ "$TARGET/" --delete --exclude "assets/*" --exclude "bundle.js"
+          --cache-control "public, max-age=0, s-maxage=86400"
       - name: Invalidate CloudFront
         run: >-
           aws cloudfront create-invalidation --distribution-id "$DISTRIBUTION"
