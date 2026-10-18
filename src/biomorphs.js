@@ -21,7 +21,12 @@ var biomorphs = function() {
     var W = 6;
     var NW = 7;
 
-    var maxSegmentLen = 0;
+    // Biomorphs are drawn in a square of this size, which is then scaled to fit the canvas. The
+    // longest segment is a fixed fraction of it, and the genes are reduced modulo that length, so a
+    // given genome draws the same shape at any canvas size. 300 keeps the shapes the app has always
+    // drawn, from when every canvas was the default 300 pixels wide.
+    var DRAWING_SIZE = 300;
+    var maxSegmentLen = Math.floor(DRAWING_SIZE / 2 / 8);
 
     // Map x -> x1
     var dx = [];
@@ -65,8 +70,8 @@ var biomorphs = function() {
 
         var result = genes.slice(0);
 
-        // Mutate thegene, either gene+=1 or gene-=1
-        if( 0==Math.floor( Math.random(2) ) ) {
+        // Mutate the gene, either gene-=1 or gene+=1 with equal odds
+        if( Math.random() < 0.5 ) {
             result[gene] = result[gene] - 1;
             if( result[gene] < 0 ) {
                 result[gene] = 20;
@@ -88,10 +93,24 @@ var biomorphs = function() {
     function biomorph( canvasElt ) {
 
         var canvas = canvasElt;
-        var width = canvas.width;
-        var height = canvas.height;
 
         var genes = [];
+
+        /**
+         * Sizes the canvas's drawing surface to the size it is shown at, times the screen's pixel
+         * density, so drawings are neither stretched by CSS nor blurry on high density screens.
+         * Then scales the DRAWING_SIZE square to fit the canvas, centered, so drawing is done in
+         * that square's coordinates. Resizing the surface also clears it.
+         */
+        function fitToDisplay() {
+            var ratio = window.devicePixelRatio || 1;
+            canvas.width = Math.round( canvas.clientWidth * ratio );
+            canvas.height = Math.round( canvas.clientHeight * ratio );
+            var scale = Math.min( canvas.width, canvas.height ) / DRAWING_SIZE;
+            canvas.getContext('2d').setTransform( scale, 0, 0, scale,
+                ( canvas.width - DRAWING_SIZE * scale ) / 2,
+                ( canvas.height - DRAWING_SIZE * scale ) / 2 );
+        }
 
         function setGenes( newgenes ) {
             genes = newgenes;
@@ -142,16 +161,12 @@ var biomorphs = function() {
 
         function draw() {
 
+            fitToDisplay();
             var ctx = canvas.getContext('2d');
 
-            // Clear the canvas.
-            ctx.clearRect(0,0,width,height);
+            var x = DRAWING_SIZE / 2;
+            var y = DRAWING_SIZE / 2;
 
-            var x = width / 2;
-            var y = height / 2;
-
-            maxSegmentLen = Math.floor(width /2 / 8);
-            
             treeDepth = genes[0] % 9 + 1;  // min depth=1, max depth is 10
             
             var initTreeGrowthDirection = N;
