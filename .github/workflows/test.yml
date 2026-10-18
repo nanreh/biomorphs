@@ -1,0 +1,73 @@
+name: Test, Build and Deploy
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  # to redeploy main by hand
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm test
+      - run: npm run build
+      - if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        uses: actions/upload-artifact@v7
+        with:
+          name: dist
+          path: dist/
+          retention-days: 7
+
+  # Deploys the build that was just tested to www.defy.org/hacks/biomorphs/. The AWS role it
+  # assumes can only be used from this repo's main branch, and can only change that folder of the
+  # site and invalidate it in CloudFront (see ops/github-deploy.tf in the defywww repo).
+  deploy:
+    needs: build
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    # one deploy at a time, in order
+    concurrency:
+      group: deploy
+      cancel-in-progress: false
+    permissions:
+      id-token: write
+      contents: read
+    env:
+      TARGET: s3://www.defy.org/hacks/biomorphs
+      DISTRIBUTION: E1PLXKN7SZKHOY
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: dist
+          path: dist/
+      - uses: aws-actions/configure-aws-credentials@v6
+        with:
+          role-to-assume: arn:aws:iam::230118742527:role/biomorphs-deploy
+          aws-region: us-east-1
+      # The scripts and styles have content hashes in their names, so they can be cached for good.
+      # They go up first and old ones are kept, so a page loaded before the deploy can still fetch
+      # the files it refers to.
+      - name: Upload assets
+        run: >-
+          aws s3 sync dist/assets/ "$TARGET/assets/"
+          --cache-control "public, max-age=31536000, immutable"
+      # Everything else (pages, icons) replaces what is there, and files no longer in the
+      # build are removed. bundle.js is the script of the build before the move to Vite (October
+      # 2026). Its index.html was served without a cache header, so browsers may keep using it
+      # for weeks, and it is kept for them. The exclude can go after the end of 2026.
+      - name: Upload pages and other files
+        run: aws s3 sync dist/ "$TARGET/" --delete --exclude "assets/*" --exclude "bundle.js"
+      - name: Invalidate CloudFront
+        run: >-
+          aws cloudfront create-invalidation --distribution-id "$DISTRIBUTION"
+          --paths "/hacks/biomorphs/*"
