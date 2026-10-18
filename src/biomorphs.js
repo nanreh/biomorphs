@@ -28,6 +28,13 @@ var biomorphs = function() {
     var DRAWING_SIZE = 300;
     var maxSegmentLen = Math.floor(DRAWING_SIZE / 2 / 8);
 
+    // Each biomorph is centered in its canvas and drawn this many times larger, unless that would
+    // not fit, so most of them fill a good part of the canvas while sizes still compare fairly.
+    // At 2, about the biggest 15% are shrunk to fit. 1 keeps them their natural size.
+    var ZOOM = 2;
+    // the share of the canvas a biomorph can fill
+    var FILL = 0.9;
+
     // Map x -> x1
     var dx = [];
     dx[N] = 0;
@@ -136,6 +143,12 @@ var biomorphs = function() {
             setSelected(false);
         };
 
+        // Redraw when the canvas changes size, e.g. when the window is resized or a phone is
+        // turned, since the drawing surface is sized to it.
+        new ResizeObserver( function() {
+            draw();
+        }).observe( canvasElt );
+
             
 
 
@@ -161,6 +174,10 @@ var biomorphs = function() {
 
         function draw() {
 
+            if( genes.length === 0 ) {
+                return;
+            }
+
             fitToDisplay();
             var ctx = canvas.getContext('2d');
 
@@ -170,11 +187,30 @@ var biomorphs = function() {
             treeDepth = genes[0] % 9 + 1;  // min depth=1, max depth is 10
             
             var initTreeGrowthDirection = N;
-            
-            drawTree( ctx, x, y, treeDepth, initTreeGrowthDirection );
+
+            // Measure the tree first, to center it and zoom in on it.
+            var left = x, top = y, right = x, bottom = y;
+            growTree( x, y, treeDepth, initTreeGrowthDirection, function( x, y, i, j ) {
+                left = Math.min( left, i );
+                top = Math.min( top, j );
+                right = Math.max( right, i );
+                bottom = Math.max( bottom, j );
+            });
+            var zoom = Math.min( ZOOM, DRAWING_SIZE * FILL / Math.max( right - left, bottom - top, 1 ) );
+            ctx.translate( DRAWING_SIZE / 2, DRAWING_SIZE / 2 );
+            ctx.scale( zoom, zoom );
+            ctx.translate( -( left + right ) / 2, -( top + bottom ) / 2 );
+
+            growTree( x, y, treeDepth, initTreeGrowthDirection, function( x, y, i, j, treeDepth ) {
+                drawSegment( ctx, x, y, i, j, treeDepth );
+            });
         }
 
-        function drawTree( ctx, x, y, treeDepth, treeGrowthDirection ) {
+        /**
+         * Walks the tree, calling visit( x, y, i, j, treeDepth ) for each segment, from (x, y) to
+         * (i, j), in drawing order.
+         */
+        function growTree( x, y, treeDepth, treeGrowthDirection, visit ) {
 
             if( treeGrowthDirection < 0 ) {
                 treeGrowthDirection += 8;
@@ -191,7 +227,20 @@ var biomorphs = function() {
             
             var i = x + Math.floor( xoffset*( genes[xGene] * 2579 ) % maxSegmentLen );
             var j = y + Math.floor( yoffset*( genes[yGene] * 5051 ) % maxSegmentLen );
-            
+
+            visit( x, y, i, j, treeDepth );
+
+            if( treeDepth <= 0 ) {
+                return;
+            }
+
+            // Grow the left and right subtrees recursively.
+            growTree( i, j, treeDepth-1, treeGrowthDirection+1, visit );
+            growTree( i, j, treeDepth-1, treeGrowthDirection-1, visit );
+        }
+
+        function drawSegment( ctx, x, y, i, j, treeDepth ) {
+
             var rscale = Math.floor( genes[7] * 577) % 255;
             var gscale = Math.floor( genes[8] * 1297) % 255;
             var bscale = Math.floor( genes[9] * 2089) % 255;
@@ -204,7 +253,6 @@ var biomorphs = function() {
             
             var width = Math.abs( genes[10]*treeDepth ) % 5 + 1;
             
-            var ctx = canvas.getContext('2d');
             ctx.beginPath();
             ctx.lineWidth = width;
             ctx.lineCap = 'round';
@@ -214,14 +262,6 @@ var biomorphs = function() {
             ctx.lineTo( i, j );
             ctx.closePath();
             ctx.stroke();
-            
-            if( treeDepth <= 0 ) {
-                return;
-            }
-
-            // Draw the left and right subtrees recursively.
-            drawTree(ctx, i, j, treeDepth-1, treeGrowthDirection+1 );
-            drawTree(ctx, i, j, treeDepth-1, treeGrowthDirection-1 );
         }
         
         return {
