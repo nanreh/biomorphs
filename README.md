@@ -1,6 +1,6 @@
 # Biomorphs
 
-Biomorphs breeds Richard Dawkins' biomorphs from *The Blind Watchmaker*: little tree-shaped creatures grown from a genome of eleven genes. The one in the middle is the parent, and around it are its children, each with one gene mutated. Click a child to breed from it, click the parent for a new litter, and see what selection can do in a few generations.
+Biomorphs breeds Richard Dawkins' biomorphs from *The Blind Watchmaker*: little tree-shaped creatures grown from a genome of thirteen genes. The one in the middle is the parent, and around it are its children, each with one gene mutated. Click a child to breed from it, click the parent for a new litter, and see what selection can do in a few generations.
 
 The project is hosted at [defy.org/hacks/biomorphs](https://defy.org/hacks/biomorphs/).
 
