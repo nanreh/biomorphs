@@ -20,6 +20,7 @@ import {
 } from "./genetics";
 import { readout } from "./readout";
 import { initBursts } from "./burst";
+import { genesFromQuery, genesQuery } from "./link";
 
 /**
  * A biomorph shown on a canvas, with its genes in an element over the canvas. It is drawn again
@@ -152,9 +153,16 @@ function init() {
       child.setGenes(mutate(parent.getGenes()), parent.getGenes());
     }
   };
+  // The address always has the parent's genes, so it can be copied and shared. It is replaced
+  // rather than added to the history, so the back button still leaves the page.
+  const aboutLink = document.querySelector<HTMLAnchorElement>("a.about-burst")!;
   const setParent = (genes: Genes, bredFrom?: Genes) => {
     parent.setGenes(genes, bredFrom);
     breed();
+    const query = genesQuery(genes);
+    history.replaceState(null, "", query);
+    // so coming back from the About page brings back this parent
+    aboutLink.href = "about/" + query;
   };
 
   // Clicking a child makes it the parent, clicking the parent breeds a new litter.
@@ -170,7 +178,8 @@ function init() {
 
   initBursts();
   initGenesButton();
-  setParent(randomGenes());
+  // a link's genes if it has them, otherwise a random monster
+  setParent(genesFromQuery(location.search) ?? randomGenes());
 }
 
 // The button that shows every biomorph's genes at once, which is also how to see them where

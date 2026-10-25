@@ -11,3 +11,7 @@ import "./index.css";
 import { initBursts } from "./burst";
 
 initBursts();
+
+// Back to the app with the parent the app was showing, which it passed along in the query.
+document.querySelector<HTMLAnchorElement>("a.about-burst")!.href =
+  "../" + location.search;
