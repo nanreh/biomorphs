@@ -13,7 +13,7 @@ import {
 } from "./genetics";
 import { readout, type GeneText } from "./readout";
 
-// depth 6, steps, 3 segments 14 apart, two gradients, up/down spokes, colour and width
+// depth 6, steps, 3 segments 14 apart, two gradients, up/down spokes, color and width
 // prettier-ignore
 const GENES: Genes = [
   6,
@@ -47,7 +47,7 @@ describe("readout", () => {
       ["depth 6", "steps −1 −1 4 −1 1 2 −8 4"],
       ["segments 3", "spacing 14 −", "spokes up/down"],
       ["gradients · · + · · · − ·"],
-      ["colour 2 16 9", "width 14"],
+      ["color 2 16 9", "width 14"],
     ]);
   });
 

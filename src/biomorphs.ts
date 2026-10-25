@@ -19,6 +19,7 @@ import {
   type Genes,
 } from "./genetics";
 import { readout } from "./readout";
+import { initBursts } from "./burst";
 
 /**
  * A biomorph shown on a canvas, with its genes in an element over the canvas. It is drawn again
@@ -167,6 +168,7 @@ function init() {
     .getElementById("randomBtn")!
     .addEventListener("click", () => setParent(randomGenes()));
 
+  initBursts();
   initGenesButton();
   setParent(randomGenes());
 }

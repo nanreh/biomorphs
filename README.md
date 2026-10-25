@@ -19,7 +19,9 @@ The other standard scripts exist also: `npm test`, `npm run lint`, `npm run buil
 
 - `src/genetics.ts` is how a genome becomes a biomorph: random genomes, mutation, the tree of line segments the genes grow into, and how it is framed and colored. It doesn't touch the page, and `src/genetics.test.ts` tests it.
 - `src/readout.ts` turns a genome into the labeled text shown over each biomorph, marking the gene that changed from its parent and the genes that have no effect. `src/readout.test.ts` tests it.
+- `src/burst.ts` is the starburst in the corner of each page that links the app and its About page. `src/burst.test.ts` tests it.
 - `src/biomorphs.ts` is the page: one canvas per biomorph, sized to how big it is shown and the screen's pixel density, and the clicks that breed them.
+- `about/index.html` is the About page, with `src/about.ts` as its script. Vite builds it as a second page, so `about/` is a real folder on the web server (see `vite.config.ts`).
 
 ## License
 

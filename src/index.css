@@ -1,4 +1,3 @@
-/* Laid out like the other defy.org hacks (Calendar Hack, Pace Playground), with its own colors. */
 :root {
   --app-bg-color: #3f5e5a;
   --focus-color: #ffb454;
@@ -37,9 +36,18 @@ a:hover {
   color: var(--focus-color);
 }
 
+/* The toolbar and the page's content, centered. The toolbar is as wide as the cards below it,
+   less its margin, which the About burst's position depends on. */
+.page {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
 .toolbar {
-  display: flex;
-  justify-content: center;
+  position: relative;
+  display: grid;
+  grid-template-columns: 10% auto 10%;
   margin: 5px;
 }
 
@@ -57,18 +65,137 @@ a:hover {
   }
 }
 
-main {
-  max-width: 780px;
-  margin: 0 auto;
-  padding: 0 16px;
+.tools-start,
+.tools-middle,
+.tools-end {
+  display: flex;
+  align-items: center;
 }
 
+.tools-middle {
+  justify-content: center;
+}
+
+.tools-end {
+  justify-content: flex-end;
+}
+
+.tool-button {
+  display: block;
+  padding: 3px;
+  color: var(--controls-bg-color);
+}
+
+.tool-button:hover {
+  color: var(--focus-color);
+}
+
+.tool-button svg {
+  display: block;
+  width: 2em;
+  height: 2em;
+}
+
+/* About burst */
+.burst-container {
+  /* Centered on the top left corner of the card below the toolbar, which sits just outside the
+     toolbar's 5px margin. On narrow screens it moves right far enough to stay on screen, given
+     that the toolbar is centered in the window. */
+  position: absolute;
+  left: max(-5px, calc(50px - (100vw - 100%) / 2));
+  top: calc(100% + 5px);
+  transform: translate(-50%, -50%);
+  z-index: 1;
+  display: flex;
+}
+
+.burst-container svg {
+  display: block;
+}
+
+.about-burst {
+  display: inline-block;
+  text-decoration: none;
+  transform: rotate(-12deg);
+  transition: transform 0.2s ease;
+}
+
+.about-burst:hover {
+  transform: scale(1.1) rotate(10deg);
+}
+
+.about-burst .burst-shape {
+  fill: var(--primary-color);
+  stroke: var(--secondary-color);
+  stroke-width: 1;
+  transition: fill 0.2s ease;
+}
+
+.about-burst:hover .burst-shape {
+  fill: var(--focus-color);
+}
+
+.about-burst .burst-text {
+  fill: var(--text-color);
+  font-size: 21px;
+  font-weight: 900;
+  animation: burst-text-in 0.4s ease-out;
+}
+
+@keyframes burst-text-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.5) rotate(-15deg);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.1) rotate(5deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+/* The top padding leaves room for the About burst over the card's corner. */
 .card {
   background-color: var(--card-color);
   border: 3px solid var(--secondary-color);
   border-radius: 5px;
-  padding: 1em 1.25em;
+  padding: 2.5em 1.25em 1em 1.25em;
   margin-bottom: 1em;
+}
+
+.about h2 {
+  margin: 0.2em 0 0 0;
+  font-size: 1.75rem;
+}
+
+.about h3 {
+  margin: 1.5em 0 0.5em 0;
+}
+
+.about hr {
+  margin: 1rem 0;
+  border: 0;
+  border-top: 1px solid rgb(0 0 0 / 0.1);
+}
+
+.about p {
+  margin: 0 0 1rem 0;
+}
+
+.about li {
+  margin-bottom: 0.4em;
+}
+
+/* the links are the light primary color, which is too faint on a card */
+.about a {
+  color: #2f7466;
+}
+
+.about a:hover {
+  color: var(--focus-color);
 }
 
 blockquote {

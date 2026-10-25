@@ -81,7 +81,7 @@ export function readout(genes: Genes, bredFrom?: Genes): GeneGroup[][] {
     ],
     [{ label: "gradients", genes: run(STEP_GRADIENTS, 8, gradient) }],
     [
-      { label: "colour", genes: run(RED, 3) },
+      { label: "color", genes: run(RED, 3) },
       { label: "width", genes: [text(LINE_WIDTH)] },
     ],
   ];
