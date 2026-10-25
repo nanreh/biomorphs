@@ -115,14 +115,74 @@ canvas {
   border-color: var(--primary-color);
 }
 
-.child.selected,
-.parent.selected {
+.cell {
+  position: relative;
+  /* so the genes' text can be sized to the cell, which is as wide as its canvas */
+  container-type: inline-size;
+}
+
+.cell:hover canvas {
   border-color: var(--focus-color);
+}
+
+/* A biomorph's genes, over the bottom of its canvas and inside its border. Clicks go through
+   to the canvas. */
+.genes {
+  position: absolute;
+  left: 4px;
+  right: 4px;
+  bottom: 4px;
+  padding: 0.35em 0.5em;
+  background: rgb(0 0 0 / 0.75);
+  color: var(--card-color);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: clamp(7px, 3.9cqw, 12px);
+  line-height: 1.4;
+  font-variant-numeric: tabular-nums;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+.genes > div {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 1em;
+}
+
+.genes .label {
+  color: var(--primary-color);
+  opacity: 0.8;
+}
+
+/* genes that have no effect on this biomorph, e.g. spacing with only one segment */
+.genes .inactive {
+  opacity: 0.35;
+}
+
+/* the gene that differs from the biomorph this one was bred from */
+.genes .changed {
+  color: black;
+  background: var(--focus-color);
+  border-radius: 2px;
+  padding: 0 0.15em;
+  opacity: 1;
+}
+
+@media (hover: hover) {
+  .cell:hover .genes {
+    opacity: 1;
+  }
+}
+
+#grid.show-genes .genes {
+  opacity: 1;
 }
 
 .actions {
   display: flex;
   justify-content: center;
+  gap: 0.75em;
   margin: 1em 0;
 }
 

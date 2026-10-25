@@ -22,25 +22,27 @@
             <p class="how">
                 The biomorph in the middle is the parent, and around it are its children, each with one
                 gene mutated. Click a child to make it the parent and breed from it. Click the parent
-                for a new litter.
+                for a new litter. Hover over a biomorph to see its genes, with the one that changed
+                from its parent highlighted.
             </p>
         </div>
 
         <!-- the parent is the middle of the grid -->
         <div id="grid">
-            <canvas class="child">No canvas support</canvas>
-            <canvas class="child">No canvas support</canvas>
-            <canvas class="child">No canvas support</canvas>
-            <canvas class="child">No canvas support</canvas>
-            <canvas class="parent">No canvas support</canvas>
-            <canvas class="child">No canvas support</canvas>
-            <canvas class="child">No canvas support</canvas>
-            <canvas class="child">No canvas support</canvas>
-            <canvas class="child">No canvas support</canvas>
+            <div class="cell"><canvas class="child">No canvas support</canvas></div>
+            <div class="cell"><canvas class="child">No canvas support</canvas></div>
+            <div class="cell"><canvas class="child">No canvas support</canvas></div>
+            <div class="cell"><canvas class="child">No canvas support</canvas></div>
+            <div class="cell"><canvas class="parent">No canvas support</canvas></div>
+            <div class="cell"><canvas class="child">No canvas support</canvas></div>
+            <div class="cell"><canvas class="child">No canvas support</canvas></div>
+            <div class="cell"><canvas class="child">No canvas support</canvas></div>
+            <div class="cell"><canvas class="child">No canvas support</canvas></div>
         </div>
 
         <div class="actions">
             <button id="randomBtn" class="app-button">Random Monster</button>
+            <button id="genesBtn" class="app-button" aria-pressed="false">Show Genes</button>
         </div>
     </main>
 
